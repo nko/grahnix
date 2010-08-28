@@ -13,15 +13,22 @@
 
 <textarea id="codeEditor" rows="40" cols="80">
 	void setup() {
-		size(250,250);
-		frameRate(20);
-		strokeWeight(2);
+		size(640,250);
+		frameRate(60);
+		strokeWeight(40);
 	}
 
+    int bgcolor = 0;
+    boolean down = false;
 	void draw() {
-		background(50);
-		stroke(0,156,255);
-		line(random(width),random(height),random(width),random(height));
+                if (bgcolor == 255) down = true;
+                if (bgcolor == 0) down = false;
+                 
+                if (down) bgcolor--;
+                else bgcolor++;
+
+		stroke(bgcolor,bgcolor,bgcolor);
+		line(random(width/10),random(height/10),random(width),random(height));
 	}
 </textarea>
 
