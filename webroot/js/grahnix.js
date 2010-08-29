@@ -1,6 +1,7 @@
 var user_id = null;
 var room_id = null;
 var reset_room = true;
+var editor = null;
 
 Object.prototype.addListener = function(str, callback) { 
 	this.addEventListener(str, callback, false)
@@ -8,7 +9,17 @@ Object.prototype.addListener = function(str, callback) {
 }
 
 window.onload = function(){
+
+	var code_source = document.getElementById('codeEditor')
+	if (!editor) { 
+		editor = CodeMirror.fromTextArea(code_source, {
+				parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
+				path: "js/codemirror/js/",
+				stylesheet: "js/codemirror/css/jscolors.css"
+		});
+	}
 	restart_processing('codeCanvas', 'codeEditor')
+
 	var canvas = document.getElementById('codeCanvas')
 	var run = document.getElementById('run')
 	run.addEventListener('click', canvas_blur_handler, false)
@@ -189,7 +200,7 @@ function refresh_users(users) {
 
 function refresh_code(code) { 
 	$('#code').css('display', 'none')
-	$('#codeEditor').val(code)
+	editor.setCode(code)
  	restart_processing('codeCanvas', 'codeEditor')
 	$('#code').css('display', 'block')
 }
@@ -218,14 +229,13 @@ function handle_message(msg) {
 }
 
 function canvas_blur_handler(e) { 
-	send_message({type:'code_update', code:$('#codeEditor').val(), user_id:user_id, room_id:room_id})
+	send_message({type:'code_update', code:editor.getCode(), user_id:user_id, room_id:room_id})
 }
 
 function restart_processing(canvas_id, code_source) { 
 	var canvas = document.getElementById(canvas_id)
-	var code = document.getElementById(code_source).value
 	try { 
-		Processing(canvas, code)
+		Processing(canvas, editor.getCode())
 	} catch (e) { 
 		alert(e);
 	}
