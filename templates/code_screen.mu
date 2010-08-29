@@ -7,6 +7,11 @@
 </head>
 <body>
 
+<!-- init state info follows as JSON -->
+<script type="text/javascript">
+	
+</script>
+
 <div id="canvas_box">
 	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
 </div>
