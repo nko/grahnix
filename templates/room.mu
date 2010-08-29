@@ -9,9 +9,8 @@
 
 <!-- init state info follows as JSON -->
 <script type="text/javascript">
-	{{ proxy }}
 </script>
-
+<div id="left_side">
 <div id="canvas_box">
 	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
 </div>
@@ -26,18 +25,22 @@
     int bgcolor = 0;
     boolean down = false;
 	void draw() {
-                if (bgcolor == 255) down = true;
-                if (bgcolor == 0) down = false;
-                 
-                if (down) bgcolor--;
-                else bgcolor++;
+
+		if (bgcolor == 255) down = true;
+		if (bgcolor == 0) down = false;
+		 
+		if (down) bgcolor--;
+		else bgcolor++;
 
 		stroke(bgcolor,bgcolor,bgcolor);
 		line(random(width/10),random(height/10),random(width),random(height));
 	}
 </textarea>
-
 <input id="run" type="button" value="Run Program"/>
+</div>
+
+<div id="right_side">
+</div>
 
 </body>
 
