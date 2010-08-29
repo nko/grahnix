@@ -5,10 +5,10 @@ Object.prototype.addListener = function(str, callback) {
 
 function process_message(message, socket) { 
 	if (message.users) { 
-
+		
 	}
 	if (message.chat) { 
-
+		$("#chat_"+chat.id)	
 	}
 	if (message.code_update) { 
 

@@ -67,13 +67,11 @@ function Message(user, text) {
 	messages[this.id] = this
 }
 
-if (exports) { 
-	exports.Room = Room
-	exports.Message = Message
-	exports.Chat = Chat
-	exports.User = User
-	exports.users = users
-	exports.rooms = rooms
-	exports.messages = messages
-	exports.chats = chats
-}
+exports.Room = Room
+exports.Message = Message
+exports.Chat = Chat
+exports.User = User
+exports.users = users
+exports.rooms = rooms
+exports.messages = messages
+exports.chats = chats
