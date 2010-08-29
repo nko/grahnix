@@ -70,9 +70,12 @@ ws.createServer(function( socket ) {
 				case 'create_room':
 					// create room, send room list
 					var u=model.users[message.user_id]
-					console.log('users '+model.users)
 					console.log('create room:' + message.user_id)
-					room = new model.Room(model.users[message.user])
+					var room = new model.Room(model.users[message.user])
+					room.add_user(u)
+					chat = new model.Chat(0, users[message.user])
+					room.add_chat(chat)
+					u.send_message({rooms:model.rooms, room_id:room.id, chats:room.chats, code:room.code, users:room.users})
 					for (i in model.users) { 
 						model.users[i].send_message({rooms:model.rooms})
 					}
@@ -83,12 +86,8 @@ ws.createServer(function( socket ) {
 					var r = model.rooms[message.room_id]
 					var u = model.users[message.user_id]
 					r.add_user(u)
-                    // send new user the chat history (maybe room state in future?)
-                    // TODO make this less cumbersome, maybe exchange and store chats as lighweight objects:
-                    // .e.g {line:null,text:"blahblah",user:"nikolaj"}
-                    console.log("updating with "+room.chats.length+" chats");
 					// send the person who logged in full room info
-                    u.send_message({room_id:room.id, chats:r.chats, users:r.users, code:r.code});
+                    u.send_message({room_id:r.id, chats:r.chats, users:r.users, code:r.code});
 					// everyone else should get an updated user list.
 					for (i in r.users) { 
 						if (r.users[i].id != u.id) { 
@@ -98,6 +97,7 @@ ws.createServer(function( socket ) {
                     break;
 				case 'leave_room':
 					console.log(message)
+                    console.log ("Leave room for u"+message.user_id+" from r"+message.room_id)
 					var r = model.rooms[message.room_id]
 					var u = model.users[message.user_id]
 					r.remove_user(u)

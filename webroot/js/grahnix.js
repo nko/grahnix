@@ -65,16 +65,19 @@ function send_message(msg){
 
 
 function create_new_room(e) { 
+    reset_room = true;
+    if (room_id != null) { 
+		send_message({type:'leave_room', user_id:user_id, room_id:room_id.toString()})
+	}
 	send_message({type:'create_room', user_id:user_id})
 }
 
 function join_room(e) { 
+	reset_room = true;
 	if (room_id != null) { 
 		send_message({type:'leave_room', user_id:user_id, room_id:room_id.toString()})
 	}
 	send_message({type:'join_room', user_id:user_id, room_id:this.rel.toString()})	
-	room_id = this.rel.toString();
-	reset_room = true;
 }
 
 function refresh_lobby(rooms) { 
@@ -134,7 +137,6 @@ function get_chat_display(chat) {
 	elm.type='text'
 	$(panel).attr('class', 'chat_window')
 	$(panel).attr('id', 'chat_id_'+chat.id)
-	$(panel).append("<h3>Chatting about line "+chat.line+"</h3>")
 	var messages = get_chat_messages(chat)
 	$(panel).append(messages)
 	$(panel).append(elm)
@@ -161,18 +163,15 @@ function refresh_chats(chats) {
 		var scrollHeight = $('#chat_id_'+chats[i].id+' div.messages').attr('scrollHeight')
 		$('#chat_id_'+chats[i].id+' div.messages').attr('scrollTop', scrollHeight)
 	}
+
 	var ln = document.getElementById('linenumber');
 	if (!ln) {
 		var add_container = document.createElement('div')
-		var add_chat = document.createElement('a')
 		var line_number = document.createElement('input')
 		$(line_number).attr('id', 'linenumber');
 		$(line_number).attr('type', 'text')
 		$(line_number).attr('size', '3')
-		$(add_chat).append("Add Discussion")
-		$(add_chat).attr('href', '#')
-		add_chat.addListener('click', create_new_chat)
-		$(add_container).append(add_chat)
+		$(line_number).css('display','none')
 		$(add_container).append(line_number)
 		$('#discussions').append(add_container)
 		$('#chat').css('display','block');
@@ -197,7 +196,10 @@ function refresh_code(code) {
 
 function handle_message(msg) { 
 	console.log(msg)
-	if (msg.user_id) { 
+	if (msg.room_id != undefined) { 
+		room_id = String(msg.room_id)
+	}
+	if (msg.user_id != undefined) { 
 		user_id = msg.user_id
 		$("#home").css('display', 'none')
 	}

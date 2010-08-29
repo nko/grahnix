@@ -8,7 +8,23 @@ function Room(owner)
 {
 	this.id = Room_id++
 	this.users = []
-	this.code = ""
+	this.code = "   \n\
+float bgcolor = 0.0; \n\
+boolean up = true;\n\
+\n\
+void setup() { \n\
+	background(100)\n\
+		size(550,200)\n\
+}\n\
+\n\
+void draw() { \n\
+	if (bgcolor == 255.0) { up = false; } \n\
+	if (bgcolor == 0.0) { up = true; } \n\
+\n\
+	if (up) { bgcolor += 0.1; }  else { bgcolor -= 0.1;}\n\
+	background(bgcolor);\n\
+}	\n\
+	"
 	this.chats = []
 	this.owner = owner
 	rooms[this.id] = this
