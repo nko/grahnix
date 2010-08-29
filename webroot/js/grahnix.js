@@ -13,7 +13,10 @@ window.onload = function(){
 	var run = document.getElementById('run')
 	run.addEventListener('click', canvas_blur_handler, false)
 
-	socket_to_me = new WebSocket("ws://127.0.0.1:8451")
+	window.location
+	var ws_url = new String(window.location)
+	ws_url = ws_url.replace(/http:\/\/([^:\/]+).*/g, '$1')
+	socket_to_me = new WebSocket("ws://"+ws_url+":8451")
 	socket_to_me
 		.addListener('open', function() { 
 			login = document.getElementById('login')
