@@ -1,8 +1,23 @@
-var socket_to_me =null;
-
 Object.prototype.addListener = function(str, callback) { 
 	this.addEventListener(str, callback, false)
 	return this
+}
+
+function process_message(message, socket) { 
+    update_chats(message.chats);
+
+	if (message.users) { 
+		
+	}
+	if (message.chat) { 
+		$("#chat_"+chat.id)	
+	}
+	if (message.code_update) { 
+
+	}
+	if (message.user) { 
+		
+	}
 }
 
 window.onload = function(){
@@ -20,24 +35,8 @@ window.onload = function(){
 		})
 		.addListener('message', function(message) { 
 			var message = JSON.parse(message.data)
-			console.log("Got "+message.type+" message")
-			switch ( message.type ) { 
-				case 'code_update':
-				break;
-                case 'sync':
-                    console.log("got sync");
-                    update_chats(message.chats);
-                    break;
-				case 'chat_message':
-                    update_chats(message.chats);
-				    break;
-				case 'user_entered':
-				break;
-				case 'error':
-				break;
-				default:
-				break;
-			}
+			console.log("Got message"+message)
+			process_message(message, socket_to_me);
 		})
 }
 
