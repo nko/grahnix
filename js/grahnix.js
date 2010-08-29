@@ -1,8 +1,21 @@
-var socket_to_me =null;
-
 Object.prototype.addListener = function(str, callback) { 
 	this.addEventListener(str, callback, false)
 	return this
+}
+
+function process_message(message, socket) { 
+	if (message.users) { 
+
+	}
+	if (message.chat) { 
+
+	}
+	if (message.code_update) { 
+
+	}
+	if (message.user) { 
+		
+	}
 }
 
 window.onload = function(){
@@ -11,7 +24,7 @@ window.onload = function(){
 	var run = document.getElementById('run')
 	run.addEventListener('click', canvas_blur_handler, false)
 
-	socket_to_me = new WebSocket("ws://localhost:8451")
+	var socket_to_me = new WebSocket("ws://localhost:8451")
 	socket_to_me
 		.addListener('open', function() { 
 			console.log("Socket opened")
@@ -19,18 +32,7 @@ window.onload = function(){
 		.addListener('message', function(message) { 
 			console.log("Got message"+message)
 			var message = JSON.parse(message)
-			switch ( message.type ) { 
-				case 'code_update':
-				break;
-				case 'chat_message':
-				break;
-				case 'user_entered':
-				break;
-				case 'error':
-				break;
-				default:
-				break;
-			}
+			process_message(message, socket_to_me);
 		})
 }
 
