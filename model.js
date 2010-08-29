@@ -16,12 +16,12 @@ function Room(owner)
 
 Room.prototype.add_user = function(user)
 {
-	this.users.splice(0,0,user.id)
+	this.users.push(user)
 }
 
 Room.prototype.remove_user = function(user)
 {
-	this.users.splice(this.users.indexOf(user.id),1)
+	this.users.splice(this.users.indexOf(user),1)
 }
 
 // expect something like {line:35,user:joe,text:blah}

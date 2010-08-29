@@ -66,6 +66,9 @@ function create_new_room(e) {
 }
 
 function join_room(e) { 
+	if (room_id != null) { 
+		send_message({type:'leave_room', user_id:user_id, room_id:room_id.toString()})
+	}
 	send_message({type:'join_room', user_id:user_id, room_id:this.rel.toString()})	
 	room_id = this.rel.toString();
 	reset_room = true;
@@ -171,6 +174,22 @@ function refresh_chats(chats) {
 	}
 }
 
+function refresh_users(users) { 
+   $('#users').css('display', 'none')
+   $('#user_list').empty()
+   for (var i = 0; i < users.length; i++) { 
+	   $('#user_list').append('<span class="user">'+users[i].name+'</span>')
+   }
+   $('#users').css('display', 'block')
+}
+
+function refresh_code(code) { 
+	$('#code').css('display', 'none')
+	$('#codeEditor').val(code)
+ 	restart_processing('codeCanvas', 'codeEditor')
+	$('#code').css('display', 'block')
+}
+
 function handle_message(msg) { 
 	console.log(msg)
 	if (msg.user_id) { 
@@ -183,16 +202,16 @@ function handle_message(msg) {
 	if (msg.chats) { 
 		refresh_chats(msg.chats)
 	}
-	if (msg.code) {
+	if (msg.code != undefined) {
 		refresh_code(msg.code)
 	}
 	if (msg.users) { 
-	//	refresh_users(msg.users)
+		refresh_users(msg.users)
 	}
 }
 
 function canvas_blur_handler(e) { 
-	restart_processing('codeCanvas', 'codeEditor')
+	send_message({type:'code_update', code:$('#codeEditor').val(), user_id:user_id, room_id:room_id})
 }
 
 function restart_processing(canvas_id, code_source) { 

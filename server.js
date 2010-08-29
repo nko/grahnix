@@ -58,7 +58,9 @@ ws.createServer(function( socket ) {
 					console.log('users '+model.users)
 					console.log('create room:' + message.user_id)
 					room = new model.Room(model.users[message.user])
-					u.send_message({status:"ok", rooms:model.rooms})
+					for (i in model.users) { 
+						model.users[i].send_message({rooms:model.rooms})
+					}
 					break;
 				case 'join_room':
 					console.log(message)
@@ -70,14 +72,32 @@ ws.createServer(function( socket ) {
                     // TODO make this less cumbersome, maybe exchange and store chats as lighweight objects:
                     // .e.g {line:null,text:"blahblah",user:"nikolaj"}
                     console.log("updating with "+room.chats.length+" chats");
-                    u.send_message({room_id:room.id, chats:r.chats, users:r.users});
+					// send the person who logged in full room info
+                    u.send_message({room_id:room.id, chats:r.chats, users:r.users, code:r.code});
+					// everyone else should get an updated user list.
+					for (i in r.users) { 
+						if (r.users[i].id != u.id) { 
+							r.users[i].send_message({ users:r.users })
+						}
+					}
                     break;
+				case 'leave_room':
+					console.log(message)
+					var r = model.rooms[message.room_id]
+					var u = model.users[message.user_id]
+					r.remove_user(u)
+					for (i in r.users) { 
+						r.users[i].send_message({users:r.users})
+					}
+					break;
 				case 'create_chat':
 					u = model.users[message.user_id]	
 					r = model.rooms[message.room_id]
 					c = new model.Chat(message.line_number, u)
 					r.add_chat(c)
-					u.send_message({status:"ok", chats:r.chats})
+					for (i in r.users) { 
+						r.users[i].send_message({status:"ok", chats:r.chats})
+					}
 					break;
 				case 'message':
 					u = model.users[message.user_id]
@@ -85,8 +105,19 @@ ws.createServer(function( socket ) {
 					r = model.rooms[message.room_id]
 					m = new model.Message(u, message.text)
 					c.add_message(m)
-					u.send_message({status:"ok", chats:r.chats})
+					for (i in r.users) { 
+						r.users[i].send_message({status:"ok", chats:r.chats})
+					}
 					break;
+				case 'code_update':
+					u = model.users[message.user_id]
+					c = model.chats[message.chat_id]
+					r = model.rooms[message.room_id]
+					r.code = message.code
+					for (i in r.users) { 
+						r.users[i].send_message({code:r.code})
+					}
+					
 				default:
 				    break;
 			}
