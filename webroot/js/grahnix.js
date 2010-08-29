@@ -18,13 +18,16 @@ window.onload = function(){
 				stylesheet: "js/codemirror/css/jscolors.css"
 		});
 	}
-	restart_processing('codeCanvas', 'codeEditor')
 
 	var canvas = document.getElementById('codeCanvas')
-	var run = document.getElementById('run')
-	run.addEventListener('click', canvas_blur_handler, false)
 
-	window.location
+	var run = document.getElementById('run')
+	var publish = document.getElementById('share')
+
+	run.addListener('click', run_code)
+
+	publish.addListener('click', share_code)
+
 	var ws_url = new String(window.location)
 	ws_url = ws_url.replace(/http:\/\/([^:\/]+).*/g, '$1')
 	socket_to_me = new WebSocket("ws://"+ws_url+":8451")
@@ -84,6 +87,12 @@ function create_new_room(e) {
 }
 
 function join_room(e) { 
+	$('.room').css('background', '#eef');
+	$('.room').css('padding-left', '0px');
+	$('.room').css('margin-left', '0px');
+	$(this).css('background', '#fff')
+	$(this).css('padding-left', '5px')
+	$(this).css('margin-left', '-5px')
 	reset_room = true;
 	if (room_id != null) { 
 		send_message({type:'leave_room', user_id:user_id, room_id:room_id.toString()})
@@ -109,6 +118,7 @@ function refresh_lobby(rooms) {
 	add_room.addListener('click', create_new_room)
 	$('#rooms').append(add_room)
 	$('#lobby').css('display', 'block');
+	window.scrollTop=0
 }
 
 function create_new_chat(e) { 
@@ -120,9 +130,23 @@ function get_chat_messages(chat) {
 	messages = document.createElement('div')
 	$(messages).attr('class',"messages")
 	for (var i = 0; i < chat.messages.length; i++) {
-		message = chat.messages[i]
-		$(messages).append('<span class="user">'+message.user.name+':</span>')
-		$(messages).append('<span class="message">'+message.text+'</span>')
+		var message = chat.messages[i]
+		if (message.type=='code_notify') { 
+			var span = document.createElement('span')
+			$(span).attr('class', 'message codenotify')
+			var anchor = document.createElement('a')
+			$(anchor).text(message.text)
+			$(anchor).attr('href','#')
+			$(anchor).attr('rel', message.rev)
+			anchor.addListener('click', function() { 
+				send_message({type:'code_request', user_id:user_id.toString(), room_id:room_id.toString(), rev: $(this).attr('rel')})
+			})	
+			$(span).append(anchor)
+			$(messages).append(span)
+		} else { 
+			$(messages).append('<span class="user">'+message.user.name+':</span>')
+			$(messages).append('<span class="message">'+message.text+'</span>')
+		}
 	}
 	return messages;
 
@@ -228,8 +252,12 @@ function handle_message(msg) {
 	}
 }
 
-function canvas_blur_handler(e) { 
+function share_code(e) { 
 	send_message({type:'code_update', code:editor.getCode(), user_id:user_id, room_id:room_id})
+}
+
+function run_code(e) { 
+	restart_processing('codeCanvas')
 }
 
 function restart_processing(canvas_id, code_source) { 

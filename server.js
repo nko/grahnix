@@ -75,7 +75,7 @@ ws.createServer(function( socket ) {
 					room.add_user(u)
 					chat = new model.Chat(0, users[message.user])
 					room.add_chat(chat)
-					u.send_message({rooms:model.rooms, room_id:room.id, chats:room.chats, code:room.code, users:room.users})
+					u.send_message({rooms:model.rooms, room_id:room.id, chats:room.chats, code:room.code[0], users:room.users})
 					for (i in model.users) { 
 						model.users[i].send_message({rooms:model.rooms})
 					}
@@ -87,7 +87,8 @@ ws.createServer(function( socket ) {
 					var u = model.users[message.user_id]
 					r.add_user(u)
 					// send the person who logged in full room info
-                    u.send_message({room_id:r.id, chats:r.chats, users:r.users, code:r.code});
+					latest_rev = r.code.length-1
+                    u.send_message({room_id:r.id, chats:r.chats, users:r.users, code:r.code[latest_rev]});
 					// everyone else should get an updated user list.
 					for (i in r.users) { 
 						if (r.users[i].id != u.id) { 
@@ -128,13 +129,28 @@ ws.createServer(function( socket ) {
 					u = model.users[message.user_id]
 					c = model.chats[message.chat_id]
 					r = model.rooms[message.room_id]
-					r.code = message.code
-					for (i in r.users) { 
-						r.users[i].send_message({code:r.code})
+					r.code.push( message.code )
+					revision_number = r.code.length-1;
+					m = new model.Message(u, u.name + " has shared revision #"+revision_number)
+					m.type="code_notify"
+					m.rev=r.code.length-1
+					for (var i in r.chats) { 
+						r.chats[i].add_message(m)
 					}
-					
+
+					for (var i in r.users) { 
+						r.users[i].send_message({chats:r.chats})
+					}
+					break;
+				case 'code_request':
+					u = model.users[message.user_id]
+					r = model.rooms[message.room_id]
+					console.log("User "+message.user_id+" asked for revision "+message.rev+" for room "+message.room_id)
+					rev = message.rev
+					u.send_message({'code':r.code[rev]})
+					break	
 				default:
-				    break;
+				    break
 			}
 		})
 }).listen(WS_PORT)

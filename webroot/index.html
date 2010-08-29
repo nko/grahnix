@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-   <title>How To Learn</title>
+   <title>Prototype dot js collaboration tool</title>
    <link rel="stylesheet" href="/css/grahnix.css"/>
    <script type="text/javascript">exports={}</script>
    <script type="text/javascript" src="/js/model.js"></script>
@@ -11,8 +11,23 @@
    <script type="text/javascript" src="/js/grahnix.js"></script>
 </head>
 <body>
+<div id="master">
 <div id="left">
+<div id="header" class="page" style="display:block;">
+	<img src="images/grahnix-small.png" alt="a proud member of the GRAHNIX family of products"/> <h1>Prototype.js Collaboration Tool</h1>
+</div>
 <div id="home" class="page">
+	<div class="docs">
+		<h2>Hello!</h2>
+		This is a collaborative tool intended to allow people to share updates to prototype.js scripts and discuss or explain their changes.
+		When you log in, you'll be presented with a list of available "rooms."  These are like chat rooms or (actually..) class rooms. 
+		Each room has a shared prototype.js canvas and a shared code base.  Users can edit code and share their revisions with others.
+		<br/><br/>
+		One last thing, this relies heavily on web sockets, so you'll need a browser that knows what to do with them.  I tested this in Chrome developer build, so your mileage, etc.
+		<br/><br/>
+		Enter a username below to get started!
+	</div>
+
 	<h2>Login</h2>
 	<input type="text" id="user_name" length="20"/>
 	<input type="button" id="login" value="Log In"/>
@@ -21,33 +36,24 @@
 
 
 <div id="code" class="page">
-<h3>Your Program</h3>
+<h3>Your Results</h3>
 	<div id="canvas_box">
 	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
 	</div>
-
-	<textarea id="codeEditor" rows="20" cols="80">
-	void setup() {
-		size(640,250);
-		frameRate(60);
-		strokeWeight(40);
-	}
-
-	int bgcolor = 0;
-	boolean down = false;
-	void draw() {
-
-		if (bgcolor == 255) down = true;
-		if (bgcolor == 0) down = false;
-
-		if (down) bgcolor--;
-		else bgcolor++;
-
-		stroke(bgcolor,bgcolor,bgcolor);
-		line(random(width/10),random(height/10),random(width),random(height));
-	}
-	</textarea>
-	<input type="button" id="run" value="Run"/>
+	<h3> Your Code </h3>
+	<div id="editor_area">
+		<textarea id="codeEditor" rows="20" cols="80">
+		</textarea>
+		<input type="button" id="run" value="Run"/>
+		<input type="button" id="share" value="Share"/>
+	</div>
+	<div class="docs">
+		<h2>Things to Know</h2>
+		To test your project, click "run."  If you have any errors in your code, we will tell you then.  
+		When you're happy the code, click "share" to notify everyone in the room that new code is available.
+		In the discussion section to your right, other people's code changes are available.  
+		You can choose any of their revisions by clicking the link provided. 
+	</div>
 </div>
 </div>
 <div id="right">
@@ -55,6 +61,7 @@
 	<h2>Rooms</h2>
 	<div id="rooms" class="section">
 	</div>
+	
 </div>
 
 
@@ -66,6 +73,7 @@
 <div id="chat" class="page">
 	<h3>Discussion</h3>
 	<div id="discussions" class="section"></div>
+</div>
 </div>
 </div>
 

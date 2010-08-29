@@ -2,6 +2,16 @@
 	display: none;
 }
 
+#master { 
+   width:800px;
+   padding:40px;
+   height: 850px;
+   display: block;
+   background: white;
+   margin-left: auto;
+   margin-right: auto;
+}
+
 body { 
 	font-family: Helvetica, sans-serif;
 	font-size: 10pt;
@@ -32,7 +42,7 @@ body {
 .messages { 
 	display: block;
 	float: left;
-	height: 200px;
+	height: 500px;
 	width: 100%;
 	overflow:auto;
 }
@@ -74,4 +84,25 @@ width:600px;
 #right { 
 float:left;
 width:200px;
+}
+
+#right > div { 
+	padding: 5px;
+}
+
+#chat { 
+   background: #ffe;
+}
+
+#users { 
+	background: #efe;
+}
+
+#lobby { 
+	background: #eef;
+}
+
+
+#editor_area { 
+	border: 1px solid gray;
 }

@@ -8,7 +8,8 @@ function Room(owner)
 {
 	this.id = Room_id++
 	this.users = []
-	this.code = "   \n\
+	this.code = []
+	this.code.push("   \n\
 float bgcolor = 0.0; \n\
 boolean up = true;\n\
 \n\
@@ -25,6 +26,7 @@ void draw() { \n\
 	background(bgcolor);\n\
 }	\n\
 	"
+	)
 	this.chats = []
 	this.owner = owner
 	rooms[this.id] = this
@@ -84,6 +86,7 @@ function Message(user, text) {
 	this.id = Message_id++
 	this.user = user
 	this.text = text
+	this.type="text"
 	messages[this.id] = this
 }
 
