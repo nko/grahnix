@@ -1,0 +1,6 @@
+[submodule "includes/ws"]
+	path = includes/ws
+	url = git://github.com/ncr/node.ws.js.git
+[submodule "includes/paperboy"]
+	path = includes/paperboy
+	url = git://github.com/felixge/node-paperboy.git

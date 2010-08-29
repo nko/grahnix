@@ -4,10 +4,15 @@ var fs = require('fs')
 var Mu = require ('./lib/mu')
 var ws = require('./lib/ws')
 var model = require('./model')
+var path = require('path')
+var sys = require('sys')
 
 Mu.templateRoot = './templates/'
 var HTTP_PORT = 80
 var WS_PORT = 8451
+
+var WEBROOT = path.join(path.dirname(__filename), 'webroot');
+var paperboy = require("paperboy");
 
 var context = { }
 var users = [];
@@ -21,51 +26,7 @@ process.argv.forEach(function (val, index, array) {
     }
 });
 
-/**
- * A simple HTTP server - knows how to serve js, css, png files and mustache templates
- */
-http.createServer(function(req,res) { 
-    // look at the request's path type - if /images/ - we're looking for an image
-	// if /anything_else - we're looking for a template (of that name)
-    var template = 'home.html';
-	if (req.url.indexOf('/css/') == 0) { 
-		fs.readFile('.'+req.url, function(err, data) { 
-			res.writeHead(200, {"Content-Type": "text/css"})
-			res.end(data)
-		})
-	}else
-	if (req.url.indexOf('/js/') == 0) { 
-		fs.readFile('.'+req.url, function(err, data) {
-			res.writeHead(200, {"Content-Type": "application/javascript"})
-			res.end(data)
-		})
-	} else if (req.url.indexOf('/images/') == 0) { 
-		fs.readFile(Mu.templateRoot+req.url, function(err,data) { 
-			if (err) throw err
-			res.writeHead(200, {"Content-Type": "image/png"})
-			res.end(data)
-		})
-	}
-	else {  
-		if (req.url != '/') { 
-		template = req.url.substr(1);
-		}
-		res.writeHead(200, {"Content-Type": "text/html"})
-		Mu.render(template, context,{}, function (err, output) { 
-			if (err) { 
-				res.writeHead(404, {"Content-Type": "text/html"}) 
-				res.end("<h1>Page not Found "+req.url+"</h1>");
-			}
-			else { 
-				output
-					.addListener('data', function(c) { res.write(c); })
-					.addListener('end',function(){res.end()})
-			}
-		})
-	}
-}).listen(HTTP_PORT)
-
-
+var room = new model.Room();
 
 /**
  * web socket server - 
@@ -89,18 +50,43 @@ ws.createServer(function( socket ) {
 		.addListener('data', function( data ) {
 			var message = JSON.parse( data )
 			switch ( message.type ) { 
-				case 'new_user':
-				break;
 				case 'join_room':
-				break;
-				case 'login':
-				break;
-				case 'code_update':
-				break;
+                    var u=new model.User(message.username,websocket);
+                    room.add_user(u);
+                    // send new user the chat history (maybe room state in future?)
+                    u.send_message({source:"room",message:room.chats});
+                    break;
 				case 'chat_message':
-				break;
+                    for(var i=0;i<room.users.length;i++){
+                        var u = room.users[i];
+                        if(u.websocket != websocket){
+                            u.send_message({type:"chat_message",message:data.message});
+                            room.add_chat(new model.Chat(data.message));
+                        }
+                    }
+    				break;
 				default:
-				break;
+				    break;
 			}
 		})
 }).listen(WS_PORT)
+
+http.createServer(function (req, res) {
+  paperboy
+    .deliver(WEBROOT, req, res)
+    .before(function() {
+      sys.puts('About to deliver: '+req.url);
+    })
+    .after(function() {
+      sys.puts('Delivered: '+req.url);
+    })
+    .error(function() {
+      sys.puts('Error delivering: '+req.url);
+    })
+    .otherwise(function() {
+      res.writeHead(404, {'Content-Type': 'text/plain'});
+      res.write('Sorry, no paper this morning!');
+      res.end();
+    });
+}).listen(HTTP_PORT);
+
