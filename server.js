@@ -82,9 +82,10 @@ ws.createServer(function( socket ) {
 				case 'message':
 					u = model.users[message.user_id]
 					c = model.chats[message.chat_id]
+					r = model.rooms[message.room_id]
 					m = new model.Message(u, message.text)
 					c.add_message(m)
-					u.send_message({status:"ok", chats:[c]})
+					u.send_message({status:"ok", chats:r.chats})
 					break;
 					/*
 				case 'chat_message':

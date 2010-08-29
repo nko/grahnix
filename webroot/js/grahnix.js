@@ -72,7 +72,7 @@ function join_room(e) {
 function refresh_lobby(rooms) { 
 	$('#lobby').css('display', 'none');
 	$('#rooms').empty()
-	for (i = 0; i < rooms.length; i++) { 
+	for (var i = 0; i < rooms.length; i++) { 
 		var room_link = document.createElement('a');
 		$(room_link).attr('href', '#')
 		$(room_link).attr('rel', rooms[i].id)
@@ -101,15 +101,16 @@ function get_chat_display(chat) {
 	send_button.type='button';
 	send_button.value='Send';
 	send_button.addListener('click', function() { 
-		send_message({type:'message', chat_id:chat.id.toString(), user_id:user_id.toString(), text:$(elm).val()})
+		send_message({type:'message', room_id:room_id.toString(), chat_id:chat.id.toString(), user_id:user_id.toString(), text:$(elm).val()})
 	});
 	elm.size=20
 	elm.type='text'
 	$(panel).attr('class', 'chat_window')
-	for (i = 0; i < chat.messages.length; i++) {
+	$(panel).attr('id', 'chat_id_'+chat.id)
+	for (var i = 0; i < chat.messages.length; i++) {
 		message = chat.messages[i]
 		$(panel).append('<span class="user">'+message.user.name+':</span>')
-		$(panel).append('<span class="message">'+message.text+':</span>')
+		$(panel).append('<span class="message">'+message.text+'</span>')
 	}
 	$(panel).append("<h3>Chatting about line "+chat.line+"</h3>")
 	$(panel).append(elm)
@@ -121,7 +122,7 @@ function refresh_chats(chats) {
 	console.log(chats)	
 	$('#chat').css('display','none');
 	$('#discussions').empty()
-	for (i = 0; i < chats.length; i++) { 
+	for (var i = 0; i < chats.length; i++) { 
 		$('#discussions').append(get_chat_display(chats[i]))
 	}
 	var add_container = document.createElement('div')
