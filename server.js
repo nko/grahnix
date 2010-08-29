@@ -12,7 +12,7 @@ var HTTP_PORT = 80
 var WS_PORT = 8451
 
 var WEBROOT = path.join(path.dirname(__filename), 'webroot');
-var paperboy = require("paperboy");
+var paperboy = require("./includes/paperboy");
 var users = [];
 var websockets = {};
 
