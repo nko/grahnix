@@ -10,20 +10,14 @@
    <script type="text/javascript" src="/js/grahnix.js"></script>
 </head>
 <body>
-
+<div id="left">
 <div id="home" class="page">
-<h2>Login</h2>
-<input type="text" id="user_name" length="20"/>
-<input type="button" id="login" value="Log In"/>
+	<h2>Login</h2>
+	<input type="text" id="user_name" length="20"/>
+	<input type="button" id="login" value="Log In"/>
 </div>
 
 
-<div id="lobby" class="page">
-<h2>Lobby</h2>
-<div id="rooms" class="section">
-<h3>Rooms</h3>
-</div>
-</div>
 
 <div id="code" class="page">
 <h3>Your Program</h3>
@@ -31,7 +25,7 @@
 	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
 	</div>
 
-	<textarea id="codeEditor" rows="40" cols="80">
+	<textarea id="codeEditor" rows="20" cols="80">
 	void setup() {
 		size(640,250);
 		frameRate(60);
@@ -54,18 +48,25 @@
 	</textarea>
 	<input type="button" id="run" value="Run"/>
 </div>
+</div>
+<div id="right">
+<div id="lobby" class="page">
+	<h2>Rooms</h2>
+	<div id="rooms" class="section">
+	</div>
+</div>
+
 
 <div id="users" class="page">
 	<h3>Users in this room</h3>
-	<div id="user_list"/>
+	<div id="user_list"></div>
 </div>
 
 <div id="chat" class="page">
 	<h3>Discussions in this room</h3>
-	<div id="discussions" class="section">
-	</div>
+	<div id="discussions" class="section"></div>
 </div>
-
+</div>
 
 
 </body>

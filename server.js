@@ -41,6 +41,21 @@ ws.createServer(function( socket ) {
 		.addListener('error', function ( e )  { 
 			console.log("Error "+e)
 		})
+		.addListener('close', function ( data ) { 
+			console.log("Socket closed")
+			for (var i in model.users) { 
+				if (model.users[i].websocket == socket) { 
+					for (j in model.rooms) {
+						model.rooms[j].remove_user(model.users[i])
+					}
+				}
+			}
+			for (var i in model.rooms) { 
+				for (var j in model.rooms[i].users) { 
+					model.rooms[i].users[j].send_message({users:model.rooms[i].users})
+				}
+			}
+		})
 		.addListener('connect', function ( data ) {
 			console.log("Websocket connected")
 		})

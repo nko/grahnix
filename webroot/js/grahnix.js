@@ -158,6 +158,8 @@ function refresh_chats(chats) {
 		else { 
 			$('#discussions').append(get_chat_display(chats[i]))
 		}
+		var scrollHeight = $('#chat_id_'+chats[i].id+' div.messages').attr('scrollHeight')
+		$('#chat_id_'+chats[i].id+' div.messages').attr('scrollTop', scrollHeight)
 	}
 	var ln = document.getElementById('linenumber');
 	if (!ln) {
@@ -196,8 +198,8 @@ function refresh_code(code) {
 function handle_message(msg) { 
 	console.log(msg)
 	if (msg.user_id) { 
-		console.log("updating user id")
 		user_id = msg.user_id
+		$("#home").css('display', 'none')
 	}
 	if (msg.rooms) { 
 		refresh_lobby(msg.rooms)

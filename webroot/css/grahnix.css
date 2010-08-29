@@ -1,3 +1,77 @@
 .page { 
 	display: none;
 }
+
+body { 
+	font-family: Helvetica, sans-serif;
+	font-size: 10pt;
+	background: #eee;
+}
+
+.page { 
+	background: #fff;
+	width: 600px;
+	float: left;
+}
+
+.room { 
+	padding-bottom:5px
+}
+
+#rooms a { 
+	display: block;
+	float: left; 
+	clear: both;
+}
+
+#users, #chat, #lobby { 
+	float: left;
+	width:200px;
+}
+
+.messages { 
+	display: block;
+	float: left;
+	height: 200px;
+	width: 100%;
+	overflow:auto;
+}
+
+.chat_window { 
+	width: 200px;
+}
+.chat_window { 
+	overflow: auto;
+}
+
+.chat_window input { 
+	display: block;
+	float: left;
+}
+
+.user { 
+	display: block;
+	float: left;
+	clear: both;
+	color: blue;
+	font-weight: bold;
+}
+
+#code { 
+    overflow: hidden;
+}
+
+.message { 
+	display: block;
+	float: left;
+}
+
+#left { 
+float: left;
+width:600px;
+}
+
+#right { 
+float:left;
+width:200px;
+}
