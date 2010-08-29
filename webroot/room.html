@@ -2,50 +2,70 @@
 <html>
 <head>
    <title>How To Learn</title>
+   <link rel="stylesheet" href="/css/grahnix.css"/>
    <script type="text/javascript">exports={}</script>
    <script type="text/javascript" src="/js/model.js"></script>
-   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min"></script>
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
    <script type="text/javascript" src="/js/processing.js"></script>
    <script type="text/javascript" src="/js/grahnix.js"></script>
 </head>
 <body>
 
-<!-- init state info follows as JSON -->
-<script type="text/javascript">
-</script>
-<div id="left_side">
-<div id="canvas_box">
-	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
+<div id="home" class="page">
+<h2>Login</h2>
+<input type="text" id="user_name" length="20"/>
+<input type="button" id="login" value="Log In"/>
 </div>
 
-<textarea id="codeEditor" rows="40" cols="80">
+
+<div id="lobby" class="page">
+<h2>Lobby</h2>
+<div id="rooms" class="section">
+<h3>Rooms</h3>
+</div>
+</div>
+
+<div id="code" class="page">
+<h3>Your Program</h3>
+	<div id="canvas_box">
+	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
+	</div>
+
+	<textarea id="codeEditor" rows="40" cols="80">
 	void setup() {
 		size(640,250);
 		frameRate(60);
 		strokeWeight(40);
 	}
 
-    int bgcolor = 0;
-    boolean down = false;
+	int bgcolor = 0;
+	boolean down = false;
 	void draw() {
 
 		if (bgcolor == 255) down = true;
 		if (bgcolor == 0) down = false;
-		 
+
 		if (down) bgcolor--;
 		else bgcolor++;
 
 		stroke(bgcolor,bgcolor,bgcolor);
 		line(random(width/10),random(height/10),random(width),random(height));
 	}
-</textarea>
+	</textarea>
+	<input type="button" id="run" value="Run"/>
+</div>
 
-<div id="right_side">
-	<div id="users">
-	</div>
-	<div id="chats">
+<div id="users" class="page">
+	<h3>Users in this room</h3>
+</div>
+
+<div id="chat" class="page">
+	<h3>Discussions in this room</h3>
+	<div id="discussions" class="section">
 	</div>
 </div>
+
+
 
 </body>
 

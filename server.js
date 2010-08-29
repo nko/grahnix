@@ -11,18 +11,6 @@ Mu.templateRoot = './templates/'
 var HTTP_PORT = 80
 var WS_PORT = 8451
 
-/** 
- * Hard coding some context (for now) to get the room page working 
- */
-var room = new model.Room()
-
-/** 
- * Done hardcoding - remove this later!
- */
-var context = {
-	room: room,
-	chats: room.chats
-}
 var WEBROOT = path.join(path.dirname(__filename), 'webroot');
 var paperboy = require("paperboy");
 var users = [];
@@ -59,17 +47,46 @@ ws.createServer(function( socket ) {
 		.addListener('data', function( data ) {
 			var message = JSON.parse( data )
 			switch ( message.type ) { 
-				case 'join_room':
-                    console.log("new user: "+message.username);
+				case 'login':
+					// create new user, send room list.
                     var u=new model.User(message.username,socket);
-                    room.add_user(u);
+					u.send_message({status:"ok", rooms:model.rooms, user_id:""+u.id+""})
+					break;
+				case 'create_room':
+					// create room, send room list
+					var u=model.users[message.user_id]
+					console.log('users '+model.users)
+					console.log('create room:' + message.user_id)
+					room = new model.Room(model.users[message.user])
+					u.send_message({status:"ok", rooms:model.rooms})
+					break;
+				case 'join_room':
+					console.log(message)
+					// add user to room, send user list and chat list
+					var r = model.rooms[message.room_id]
+					var u = model.users[message.user_id]
+					r.add_user(u)
                     // send new user the chat history (maybe room state in future?)
                     // TODO make this less cumbersome, maybe exchange and store chats as lighweight objects:
                     // .e.g {line:null,text:"blahblah",user:"nikolaj"}
-                    // CONSIDER do we really need message.type?
                     console.log("updating with "+room.chats.length+" chats");
-                    u.send_message({type:"sync",chats:room.chats});
+                    u.send_message({room_id:room.id, chats:r.chats, users:r.users});
                     break;
+				case 'create_chat':
+					u = model.users[message.user_id]	
+					r = model.rooms[message.room_id]
+					c = new model.Chat(message.line_number, u)
+					r.add_chat(c)
+					u.send_message({status:"ok", chats:r.chats})
+					break;
+				case 'message':
+					u = model.users[message.user_id]
+					c = model.chats[message.chat_id]
+					m = new model.Message(u, message.text)
+					c.add_message(m)
+					u.send_message({status:"ok", chats:[c]})
+					break;
+					/*
 				case 'chat_message':
                     console.log("new chat: "+message.message);
                     var chat = {text:message.message,user:'n/a'};
@@ -80,11 +97,10 @@ ws.createServer(function( socket ) {
                     for(var i=0;i<room.users.length;i++){
                         var u = model.users[room.users[i]];
                         // TODO get user based upon socket!
-                        //if(u.websocket != socket){
-                            u.send_message({type:"chat_message",chats:[chat]});
-                        //}
+                        u.send_message({type:"chat_message",chats:[chat]});
                     }
     				break;
+					*/
 				default:
 				    break;
 			}
