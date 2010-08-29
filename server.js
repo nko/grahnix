@@ -15,12 +15,7 @@ var WS_PORT = 8451
  * Hard coding some context (for now) to get the room page working 
  */
 var room = new model.Room()
-room.add_chats(new model.Chat())
-room.add_chats(new model.Chat())
-room.add_chats(new model.Chat())
-user = new model.User('kevin')
-model.chats[room.chats[1]].add_message(new model.Message(user, 'Test Message'))
-model.chats[room.chats[1]].add_message(new model.Message(user, 'Anyone there??'))
+
 /** 
  * Done hardcoding - remove this later!
  */

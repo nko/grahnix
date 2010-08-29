@@ -7,8 +7,7 @@ function process_message(message, socket) {
     update_chats(message.chats);
 
 	if (message.users) { 
-		
-	}
+		}
 	if (message.chat) { 
 		$("#chat_"+chat.id)	
 	}
@@ -43,7 +42,10 @@ window.onload = function(){
 $(document).ready(function(){
     $("#chatline").keydown(function(event){
         if (event.keyCode == 13) {
-            send_message({type:"chat_message",message:$("#chatline").val()});
+            var text=$("#chatline").val();
+            if(text.length > 0){
+                send_message({type:"chat_message",message:text});
+            }
             $("#chatline").val("");
         }
     });
