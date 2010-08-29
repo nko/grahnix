@@ -2,6 +2,7 @@
 <html>
 <head>
    <title>How To Learn</title>
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
    <script type="text/javascript" src="/js/processing.js"></script>
    <script type="text/javascript" src="/js/grahnix.js"></script>
    <style type="text/css">
@@ -13,18 +14,24 @@
             height: 250px;
             margin: auto;
         }
+        #chatter {
+            color: #0f0;
+            overflow: auto;
+            height: 150px;
+            width: 400px;
+        }
    </style>
 </head>
 <body>
 
-<!-- init state info follows as JSON -->
-<script type="text/javascript">
-	
-</script>
-
 <div id="canvas_box">
 	<canvas id="codeCanvas" style="image-rendering: optimizespeed ! important;" height="640" width="480"></canvas>
 </div>
+
+<div id="chatter">
+
+</div>
+<div><input type="text" id="chatline" /></div>
 
 <textarea id="codeEditor" rows="40" cols="80">
 	void setup() {

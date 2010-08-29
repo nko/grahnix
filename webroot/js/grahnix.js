@@ -11,19 +11,26 @@ window.onload = function(){
 	var run = document.getElementById('run')
 	run.addEventListener('click', canvas_blur_handler, false)
 
-	socket_to_me = new WebSocket("ws://localhost:8451")
+	socket_to_me = new WebSocket("ws://127.0.0.1:8451")
 	socket_to_me
 		.addListener('open', function() { 
 			console.log("Socket opened")
+            // TODO add explicit join room 
+            send_message({type:"join_room",username:"tester"});
 		})
 		.addListener('message', function(message) { 
-			console.log("Got message"+message)
-			var message = JSON.parse(message)
+			var message = JSON.parse(message.data)
+			console.log("Got "+message.type+" message")
 			switch ( message.type ) { 
 				case 'code_update':
 				break;
+                case 'sync':
+                    console.log("got sync");
+                    update_chats(message.chats);
+                    break;
 				case 'chat_message':
-				break;
+                    update_chats(message.chats);
+				    break;
 				case 'user_entered':
 				break;
 				case 'error':
@@ -32,6 +39,26 @@ window.onload = function(){
 				break;
 			}
 		})
+}
+
+$(document).ready(function(){
+    $("#chatline").keydown(function(event){
+        if (event.keyCode == 13) {
+            send_message({type:"chat_message",message:$("#chatline").val()});
+            $("#chatline").val("");
+        }
+    });
+});
+
+function update_chats(chats){
+    for(var i=0;i<chats.length;i++){
+        $("#chatter").append(chats[i].user+": "+chats[i].text+"<br/>");
+    }
+    $("#chatter").attr({ scrollTop: $("#chatter").attr("scrollHeight") });
+}
+
+function send_message(msg){
+    socket_to_me.send(JSON.stringify(msg));
 }
 
 function canvas_blur_handler(e) { 

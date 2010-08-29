@@ -23,9 +23,11 @@ Room.prototype.remove_user = function(user)
 	this.users.splice(this.users.indexOf(user.id),1)
 }
 
-Room.prototype.add_chats = function(chat) 
+// expect something like {line:35,user:joe,text:blah}
+Room.prototype.add_chat = function(chat) 
 {
-	this.chats.splice(0,0,chat.id)
+    console.log("adding chat");
+	this.chats.push(chat)
 }
 
 var User_id = 0
@@ -42,9 +44,10 @@ User.prototype.set_name = function (name) {
 }
 
 User.prototype.send_message = function (message) {
-    this.websocket.send(JSON.stringify(message));
+    this.websocket.write(JSON.stringify(message));
 }
 
+/*
 var Chat_id = 0
 function Chat(line)
 {
@@ -58,6 +61,7 @@ Chat.prototype.add_message = function (message) {
 	// add the new message to the end of these	
 	this.messages.splice(this.messages.length,0,message)
 }
+*/
 
 var Message_id = 0
 function Message(user, text) { 
@@ -69,7 +73,7 @@ function Message(user, text) {
 
 exports.Room = Room
 exports.Message = Message
-exports.Chat = Chat
+//exports.Chat = Chat
 exports.User = User
 exports.users = users
 exports.rooms = rooms

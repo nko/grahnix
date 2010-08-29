@@ -51,18 +51,29 @@ ws.createServer(function( socket ) {
 			var message = JSON.parse( data )
 			switch ( message.type ) { 
 				case 'join_room':
-                    var u=new model.User(message.username,websocket);
+                    console.log("new user: "+message.username);
+                    var u=new model.User(message.username,socket);
                     room.add_user(u);
                     // send new user the chat history (maybe room state in future?)
-                    u.send_message({source:"room",message:room.chats});
+                    // TODO make this less cumbersome, maybe exchange and store chats as lighweight objects:
+                    // .e.g {line:null,text:"blahblah",user:"nikolaj"}
+                    // CONSIDER do we really need message.type?
+                    console.log("updating with "+room.chats.length+" chats");
+                    u.send_message({type:"sync",chats:room.chats});
                     break;
 				case 'chat_message':
+                    console.log("new chat: "+message.message);
+                    var chat = {text:message.message,user:'n/a'};
+                    room.add_chat(chat);
+
+                    // TODO in the future this should be taken care of by 
+                    // users getting notified of a new state
                     for(var i=0;i<room.users.length;i++){
-                        var u = room.users[i];
-                        if(u.websocket != websocket){
-                            u.send_message({type:"chat_message",message:data.message});
-                            room.add_chat(new model.Chat(data.message));
-                        }
+                        var u = model.users[room.users[i]];
+                        // TODO get user based upon socket!
+                        //if(u.websocket != socket){
+                            u.send_message({type:"chat_message",chats:[chat]});
+                        //}
                     }
     				break;
 				default:
@@ -75,13 +86,13 @@ http.createServer(function (req, res) {
   paperboy
     .deliver(WEBROOT, req, res)
     .before(function() {
-      sys.puts('About to deliver: '+req.url);
+      //sys.puts('About to deliver: '+req.url);
     })
     .after(function() {
-      sys.puts('Delivered: '+req.url);
+      //sys.puts('Delivered: '+req.url);
     })
     .error(function() {
-      sys.puts('Error delivering: '+req.url);
+      //sys.puts('Error delivering: '+req.url);
     })
     .otherwise(function() {
       res.writeHead(404, {'Content-Type': 'text/plain'});
