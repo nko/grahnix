@@ -29,15 +29,20 @@ Room.prototype.add_chats = function(chat)
 }
 
 var User_id = 0
-function User(name)
+function User(name,websocket)
 {
 	this.id = ++User_id
 	this.name = ""
+    this.websocket=websocket;
 	users[this.id] = this
 }
 
 User.prototype.set_name = function (name) { 
 	this.name = name
+}
+
+User.prototype.send_message = function (message) {
+    this.websocket.send(JSON.stringify(message));
 }
 
 var Chat_id = 0
