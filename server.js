@@ -13,6 +13,13 @@ var context = { }
 var users = [];
 var websockets = {};
 
+process.argv.forEach(function (val, index, array) {
+    var m = val.match(/--port=(\d+)$/);
+    if(m!=null){
+        HTTP_PORT=Number(m[1]);
+        console.log("changed HTTP PORT to "+HTTP_PORT);
+    }
+});
 
 /**
  * A simple HTTP server - knows how to serve js, css, png files and mustache templates
