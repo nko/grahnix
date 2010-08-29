@@ -87,21 +87,6 @@ ws.createServer(function( socket ) {
 					c.add_message(m)
 					u.send_message({status:"ok", chats:r.chats})
 					break;
-					/*
-				case 'chat_message':
-                    console.log("new chat: "+message.message);
-                    var chat = {text:message.message,user:'n/a'};
-                    room.add_chat(chat);
-
-                    // TODO in the future this should be taken care of by 
-                    // users getting notified of a new state
-                    for(var i=0;i<room.users.length;i++){
-                        var u = model.users[room.users[i]];
-                        // TODO get user based upon socket!
-                        u.send_message({type:"chat_message",chats:[chat]});
-                    }
-    				break;
-					*/
 				default:
 				    break;
 			}

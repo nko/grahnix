@@ -1,5 +1,6 @@
 var user_id = null;
 var room_id = null;
+var reset_room = true;
 
 Object.prototype.addListener = function(str, callback) { 
 	this.addEventListener(str, callback, false)
@@ -67,6 +68,7 @@ function create_new_room(e) {
 function join_room(e) { 
 	send_message({type:'join_room', user_id:user_id, room_id:this.rel.toString()})	
 	room_id = this.rel.toString();
+	reset_room = true;
 }
 
 function refresh_lobby(rooms) { 
@@ -94,50 +96,79 @@ function create_new_chat(e) {
 	send_message({type:'create_chat', room_id:room_id.toString(), user_id:user_id.toString(), line_number:line_number.toString() })
 }
 
+function get_chat_messages(chat) { 
+	messages = document.createElement('div')
+	$(messages).attr('class',"messages")
+	for (var i = 0; i < chat.messages.length; i++) {
+		message = chat.messages[i]
+		$(messages).append('<span class="user">'+message.user.name+':</span>')
+		$(messages).append('<span class="message">'+message.text+'</span>')
+	}
+	return messages;
+
+}
+
 function get_chat_display(chat) { 
 	var panel = document.createElement('div')
 	var elm = document.createElement('input')
 	var send_button = document.createElement('input')
 	send_button.type='button';
 	send_button.value='Send';
+	elm.addListener('keydown', function(e) { 
+		if (e.keyCode == 13) { 
+			send_message({type:'message', room_id:room_id.toString(), chat_id:chat.id.toString(), user_id:user_id.toString(), text:$(elm).val()})
+			$(elm).val('')
+		}
+	});
 	send_button.addListener('click', function() { 
 		send_message({type:'message', room_id:room_id.toString(), chat_id:chat.id.toString(), user_id:user_id.toString(), text:$(elm).val()})
+		$(elm).val('')
 	});
 	elm.size=20
 	elm.type='text'
 	$(panel).attr('class', 'chat_window')
 	$(panel).attr('id', 'chat_id_'+chat.id)
-	for (var i = 0; i < chat.messages.length; i++) {
-		message = chat.messages[i]
-		$(panel).append('<span class="user">'+message.user.name+':</span>')
-		$(panel).append('<span class="message">'+message.text+'</span>')
-	}
 	$(panel).append("<h3>Chatting about line "+chat.line+"</h3>")
+	var messages = get_chat_messages(chat)
+	$(panel).append(messages)
 	$(panel).append(elm)
-	$(panel).append(send_button);
+	$(panel).append(send_button)
 	return panel;
 }
 
 function refresh_chats(chats) { 
-	console.log(chats)	
-	$('#chat').css('display','none');
-	$('#discussions').empty()
-	for (var i = 0; i < chats.length; i++) { 
-		$('#discussions').append(get_chat_display(chats[i]))
+	if (reset_room) { 
+		$('#discussions').empty()
+		reset_room = false;
 	}
-	var add_container = document.createElement('div')
-	var add_chat = document.createElement('a')
-	var line_number = document.createElement('input')
-	$(line_number).attr('id', 'linenumber');
-	$(line_number).attr('type', 'text')
-	$(line_number).attr('size', '3')
-	$(add_chat).append("Add Discussion")
-	$(add_chat).attr('href', '#')
-	add_chat.addListener('click', create_new_chat)
-	$(add_container).append(add_chat)
-	$(add_container).append(line_number)
-	$('#discussions').append(add_container)
-	$('#chat').css('display','block');
+	console.log(chats)	
+	for (var i = 0; i < chats.length; i++) { 
+		console.log('chat_id_'+chats[i].id)
+		var pane = document.getElementById('chat_id_'+chats[i].id);
+		console.log(pane)
+		if (pane) { 
+			$(get_chat_messages(chats[i])).replaceAll('#chat_id_'+chats[i].id+' div.messages')
+		}
+		else { 
+			$('#discussions').append(get_chat_display(chats[i]))
+		}
+	}
+	var ln = document.getElementById('linenumber');
+	if (!ln) {
+		var add_container = document.createElement('div')
+		var add_chat = document.createElement('a')
+		var line_number = document.createElement('input')
+		$(line_number).attr('id', 'linenumber');
+		$(line_number).attr('type', 'text')
+		$(line_number).attr('size', '3')
+		$(add_chat).append("Add Discussion")
+		$(add_chat).attr('href', '#')
+		add_chat.addListener('click', create_new_chat)
+		$(add_container).append(add_chat)
+		$(add_container).append(line_number)
+		$('#discussions').append(add_container)
+		$('#chat').css('display','block');
+	}
 }
 
 function handle_message(msg) { 
